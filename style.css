@@ -1,0 +1,200 @@
+:root{
+    --main-color: #d3ad7f;
+    --black: #13311a;
+    --bg:#010103;
+    --border: 0.1rem solid rgba(255,255,255,0.3);
+    font-size: 10px;
+}
+
+
+*{
+    margin: 0;
+    padding: 0;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    text-transform: capitalize;
+    transition: 0.2s linear;
+    font-family: "Roboto", sans-serif;
+}
+
+body{
+    background-color: var(--black) ;
+}
+
+section{
+    padding: 3rem 2rem;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+.header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    border-bottom: var(--border);
+    background-color: rgba(0, 51, 0, 0.7);
+    
+}
+
+.header section{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+
+}
+
+.navbar a {
+    margin: 0 1rem;
+    font-size: 1.8rem;
+    color: aliceblue;
+}
+
+.navbar a:hover{
+    color: var(--main-color);
+    border-bottom: 0.1rem solid var(--main-color);
+    padding-bottom: 0.5rem;
+    font-size: 2rem
+    
+}
+
+.button a{
+    font-size: 1.8rem;
+    color: white;
+    border: 2px solid var(--main-color);
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.button a:hover{
+    color: white;
+    border-bottom: 0.1rem solid var(--main-color);
+    padding-bottom: 0.5rem;
+    font-size: 2rem;
+    background-color: var(--main-color);
+}
+
+.icons img:hover{
+    width: 45px;
+    height: 45px;
+}
+
+.btn{
+    background-color: rgba(5, 53, 1, 0.3);
+    color: white;
+    padding: 1rem 3rem;
+    display: inline-block;
+    font-size: 1.7rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    display: inline-block;
+}
+
+.home-container{
+   background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                url("cautelando\ material.png");
+    height: 100vh; /* altura menor, pode ajustar para 60vh ou 80vh */
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 0 5rem;
+}
+
+.home-container section{
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.content{
+    max-width: 60rem;
+}
+
+.content h3{
+    color: white;
+    font-size: 6rem;
+}
+
+.content p{
+    color: white;
+    font-size: 2rem;
+    font-weight: 100;
+    line-height: 1.8;
+    padding: 1rem 0;
+}
+
+.title{
+    font-size: 5rem;
+    color: var(--main-color);
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 4rem;
+}
+
+.title span{
+    text-align: center;
+    color: white;
+    text-transform: uppercase;
+}
+
+.about .row{
+    display: flex;
+    align-items: center;
+    background-color: rgba(9, 83, 3, 0.3);
+    gap: 1.5rem;
+}
+
+.about .row img {
+    flex: 1;           /* ocupa metade da linha */
+    max-width: 500px;  /* limita o tamanho máximo */
+    border-radius: 12px;
+}
+
+.about .row .content{
+    padding: 2rem;
+}
+
+.about .row .content h3{
+   font-size: 3rem; 
+   color: white;
+}
+
+.about .row .content p{
+    font-size: 1.6rem;
+    color: white;
+    padding: 1rem 0;
+    line-height: 1.8rem;
+}
+
+.address{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.footer{
+    text-align: center;
+    
+}
+
+.footer .share{
+    padding: 1rem 0;
+    
+}
+
+.footer .share img{
+    cursor: pointer;
+    margin: 0.3rem;
+    border-radius: 50%;
+    padding: 1rem;
+    
+}
+
+.footer .share img:hover{
+    background-color: var(--main-color);
+    transform: rotate(360deg);
+}
