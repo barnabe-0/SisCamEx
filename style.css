@@ -292,28 +292,30 @@ section {
 }
 
 /* Para telas menores que 450px (dispositivos móveis pequenos) */
+/* Para telas menores que 450px (dispositivos móveis pequenos) */
 @media (max-width: 450px) {
     html {
-        font-size: 45%; /* Reduz ainda mais para dispositivos muito pequenos */
+        font-size: 45%;
     }
     
     .header section {
-        flex-direction: column; /* Em telas muito pequenas, pode ser melhor empilhar */
-        justify-content: center;
+        flex-direction: row;  /* Mantém em linha no celular também */
+        justify-content: space-between;
         align-items: center;
     }
 
     .navbar {
-        flex-direction: column; /* Empilha os links da navbar novamente */
-        gap: 0.2rem;
+        flex-direction: row;  /* Links lado a lado */
+        gap: 0.5rem;
     }
 
     .navbar a {
-        font-size: 1.8rem;
+        font-size: 1.4rem; /* Ajusta para caber melhor */
     }
 
     .button {
-        margin-top: 1rem;
+        margin-top: 0; /* Remove o espaçamento extra */
+        margin-left: 1rem;
     }
 
     .content h3 {
@@ -328,6 +330,7 @@ section {
         max-width: 100%;
     }
 }
+
 
 /* Para telas maiores que 1024px (desktops maiores, se precisar de ajustes específicos) */
 @media (min-width: 1024px) {
