@@ -1,13 +1,12 @@
-:root{
+:root {
     --main-color: #d3ad7f;
     --black: #13311a;
-    --bg:#010103;
-    --border: 0.1rem solid rgba(255,255,255,0.3);
+    --bg: #010103;
+    --border: 0.1rem solid rgba(255, 255, 255, 0.3);
     font-size: 10px;
 }
 
-
-*{
+* {
     margin: 0;
     padding: 0;
     outline: none;
@@ -18,34 +17,32 @@
     font-family: "Roboto", sans-serif;
 }
 
-body{
-    background-color: var(--black) ;
+body {
+    background-color: var(--black);
 }
 
-section{
+section {
     padding: 3rem 2rem;
     margin: 0 auto;
     max-width: 1200px;
 }
 
-.header{
+.header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 99;
     border-bottom: var(--border);
-    background-color: rgba(0, 51, 0, 0.7);
-    
+    background-color: rgba(0, 51, 0, 1.0);
 }
 
-.header section{
+.header section {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
-
 }
 
 .navbar a {
@@ -54,15 +51,14 @@ section{
     color: aliceblue;
 }
 
-.navbar a:hover{
+.navbar a:hover {
     color: var(--main-color);
     border-bottom: 0.1rem solid var(--main-color);
     padding-bottom: 0.5rem;
-    font-size: 2rem
-    
+    font-size: 2rem;
 }
 
-.button a{
+.button a {
     font-size: 1.8rem;
     color: white;
     border: 2px solid var(--main-color);
@@ -70,7 +66,7 @@ section{
     border-radius: 15px;
 }
 
-.button a:hover{
+.button a:hover {
     color: white;
     border-bottom: 0.1rem solid var(--main-color);
     padding-bottom: 0.5rem;
@@ -78,12 +74,12 @@ section{
     background-color: var(--main-color);
 }
 
-.icons img:hover{
+.icons img:hover {
     width: 45px;
     height: 45px;
 }
 
-.btn{
+.btn {
     background-color: rgba(5, 53, 1, 0.3);
     color: white;
     padding: 1rem 3rem;
@@ -94,32 +90,32 @@ section{
     display: inline-block;
 }
 
-.home-container{
-   background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-                url("cautelando\ material.png");
-    height: 100vh; /* altura menor, pode ajustar para 60vh ou 80vh */
+.home-container {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("Militar cautelando.png");
+    height: 100vh;
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     padding: 0 5rem;
 }
 
-.home-container section{
+.home-container section {
     display: flex;
     align-items: center;
     min-height: 100vh;
 }
 
-.content{
+.content {
     max-width: 60rem;
 }
 
-.content h3{
+.content h3 {
     color: white;
     font-size: 6rem;
 }
 
-.content p{
+.content p {
     color: white;
     font-size: 2rem;
     font-weight: 100;
@@ -127,7 +123,7 @@ section{
     padding: 1rem 0;
 }
 
-.title{
+.title {
     font-size: 5rem;
     color: var(--main-color);
     text-align: center;
@@ -135,13 +131,13 @@ section{
     margin-bottom: 4rem;
 }
 
-.title span{
+.title span {
     text-align: center;
     color: white;
     text-transform: uppercase;
 }
 
-.about .row{
+.about .row {
     display: flex;
     align-items: center;
     background-color: rgba(9, 83, 3, 0.3);
@@ -149,52 +145,191 @@ section{
 }
 
 .about .row img {
-    flex: 1;           /* ocupa metade da linha */
-    max-width: 500px;  /* limita o tamanho máximo */
+    flex: 1;
+    max-width: 500px;
     border-radius: 12px;
 }
 
-.about .row .content{
+.about .row .content {
     padding: 2rem;
 }
 
-.about .row .content h3{
-   font-size: 3rem; 
-   color: white;
+.about .row .content h3 {
+    font-size: 3rem;
+    color: white;
 }
 
-.about .row .content p{
+.about .row .content p {
     font-size: 1.6rem;
     color: white;
     padding: 1rem 0;
     line-height: 1.8rem;
 }
 
-.address{
+.address {
     display: flex;
     align-items: center;
     flex-direction: column;
 }
 
-.footer{
+.address iframe {
+    width: 100%;
+    max-width: 600px;
+    height: 450px;
+}
+
+.footer {
     text-align: center;
-    
 }
 
-.footer .share{
+.footer .share {
     padding: 1rem 0;
-    
 }
 
-.footer .share img{
+.footer .share img {
     cursor: pointer;
     margin: 0.3rem;
     border-radius: 50%;
     padding: 1rem;
-    
+    filter: invert(70%) sepia(20%) saturate(600%) hue-rotate(350deg) brightness(95%) contrast(80%);
 }
 
-.footer .share img:hover{
+.footer .share img:hover {
     background-color: var(--main-color);
     transform: rotate(360deg);
+}
+
+/* --- Media Queries --- */
+
+/* Para telas menores que 768px (tablets e dispositivos móveis) */
+@media (max-width: 768px) {
+    html {
+        font-size: 55%;
+    }
+
+    .header section {
+        flex-wrap: nowrap; /* Impede que os itens do cabeçalho quebrem linha */
+        justify-content: space-around; /* Distribui o espaço entre os itens */
+        padding: 1rem;
+    }
+
+    .header .logo {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 0; /* Remove a margem inferior para que fiquem na mesma linha */
+    }
+    
+    .header .logo img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .navbar {
+        display: flex; /* Mantém como flexbox */
+        flex-direction: row; /* Coloca os links da navbar em linha novamente */
+        width: auto; /* Ajusta a largura automaticamente */
+        text-align: center;
+        margin-bottom: 0; /* Remove a margem inferior */
+        gap: 0.5rem; /* Adiciona um pequeno espaço entre os links */
+    }
+
+    .navbar a {
+        margin: 0 0.5rem; /* Ajusta a margem horizontal */
+        font-size: 1.5rem; /* Pode ser necessário ajustar o tamanho da fonte para caber */
+    }
+
+    .button {
+        width: auto; /* Ajusta a largura automaticamente */
+        text-align: center;
+    }
+    
+    .button a {
+        padding: 8px; /* Reduz o padding do botão para economizar espaço */
+        font-size: 1.5rem;
+    }
+
+
+    .home-container {
+        padding: 0 2rem;
+        height: 70vh;
+    }
+
+    .home-container section {
+        min-height: 70vh;
+    }
+
+    .content h3 {
+        font-size: 4rem;
+        text-align: center;
+    }
+
+    .content p {
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    .about .row {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .about .row img {
+        max-width: 90%;
+        margin-bottom: 2rem;
+    }
+
+    .about .row .content h3 {
+        font-size: 2.5rem;
+    }
+
+    .about .row .content p {
+        font-size: 1.5rem;
+    }
+
+    .address iframe {
+        height: 300px;
+    }
+}
+
+/* Para telas menores que 450px (dispositivos móveis pequenos) */
+@media (max-width: 450px) {
+    html {
+        font-size: 45%; /* Reduz ainda mais para dispositivos muito pequenos */
+    }
+    
+    .header section {
+        flex-direction: column; /* Em telas muito pequenas, pode ser melhor empilhar */
+        justify-content: center;
+        align-items: center;
+    }
+
+    .navbar {
+        flex-direction: column; /* Empilha os links da navbar novamente */
+        gap: 0.2rem;
+    }
+
+    .navbar a {
+        font-size: 1.8rem;
+    }
+
+    .button {
+        margin-top: 1rem;
+    }
+
+    .content h3 {
+        font-size: 3rem;
+    }
+
+    .title {
+        font-size: 3.5rem;
+    }
+
+    .about .row img {
+        max-width: 100%;
+    }
+}
+
+/* Para telas maiores que 1024px (desktops maiores, se precisar de ajustes específicos) */
+@media (min-width: 1024px) {
+    /* Não há muitas mudanças aqui, pois o layout base já é para desktop */
 }
