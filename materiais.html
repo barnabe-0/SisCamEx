@@ -136,82 +136,253 @@
             font-size: 0.9em;
             border-top: 5px solid #4a6c4a;
         }
+
+:root {
+      --main-color: #d3ad7f;
+      --black: #13311a;
+      --bg: #010103;
+      --border: 0.1rem solid rgba(255, 255, 255, 0.3);
+      font-size: 10px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      outline: none;
+      border: none;
+      text-decoration: none;
+      text-transform: capitalize;
+      transition: 0.2s linear;
+      font-family: "Roboto", sans-serif;
+    }
+
+    body {
+      background-color: var(--black);
+      padding-top: 120px; /* Para não sobrepor o header fixo */
+    }
+
+    section {
+      padding: 3rem 2rem;
+      margin: 0 auto;
+      max-width: 1200px;
+    }
+
+    /* HEADER */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 99;
+      border-bottom: var(--border);
+      background-color: rgba(0, 51, 0, 1.0);
+    }
+
+    .header section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1.5rem;
+      padding-bottom: 1.5rem;
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar a {
+      margin: 0 1rem;
+      font-size: 1.8rem;
+      color: aliceblue;
+    }
+
+    .navbar a:hover {
+      color: var(--main-color);
+      border-bottom: 0.1rem solid var(--main-color);
+      padding-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+
+    .button a {
+      font-size: 1.8rem;
+      color: white;
+      border: 2px solid var(--main-color);
+      padding: 10px;
+      border-radius: 15px;
+    }
+
+    .button a:hover {
+      color: white;
+      border-bottom: 0.1rem solid var(--main-color);
+      padding-bottom: 0.5rem;
+      font-size: 2rem;
+      background-color: var(--main-color);
+    }
+
+    /* --- Media Queries --- */
+
+    /* Tablets e dispositivos menores */
+    @media (max-width: 768px) {
+      html {
+        font-size: 55%;
+      }
+
+      .header section {
+        flex-wrap: nowrap;
+        justify-content: space-around;
+        padding: 1rem;
+      }
+
+      .header .logo {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 0;
+      }
+      
+      .header .logo img {
+        width: 100%;
+        height: 100%;
+      }
+
+      .navbar {
+        flex-direction: row;
+        width: auto;
+        text-align: center;
+        gap: 0.5rem;
+      }
+
+      .navbar a {
+        margin: 0 0.5rem;
+        font-size: 1.5rem;
+      }
+
+      .button a {
+        padding: 8px;
+        font-size: 1.5rem;
+      }
+    }
+
+    /* Celulares pequenos */
+    @media (max-width: 450px) {
+      html {
+        font-size: 45%;
+      }
+      
+      .header section {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .navbar {
+        flex-direction: row;
+        gap: 0.5rem;
+      }
+
+      .navbar a {
+        font-size: 1.4rem;
+      }
+
+      .button {
+        margin-left: 1rem;
+      }
+
+      .button a {
+        font-size: 1.4rem;
+        padding: 6px 10px;
+      }
+    }
     </style>
 </head>
 <body>
-    <header>
-        <h1>CASA DO MILITAR</h1>
-        <p>Seu Equipamento para Todas as Missões</p>
+    <header class="header">
+        <section>
+            <a href="#" class="logo">
+                <img width="80" height="80" src="Emblema militar _SISCAM_.png" alt="logo">
+            </a>
+
+            <nav class="navbar">
+                <a href="index.html">Home</a>
+                <a href="index.html">Sobre</a>
+                <a href="index.html">Endereço</a>
+                
+            </nav>
+
+            <div class="button">
+                <a href="materiais.html">SisCaM</a>
+            </div>
+        </section>
     </header>
 
     <div class="container">
-        <h2>Nossos Produtos em Destaque</h2>
+        <h2>SisCaM</h2>
         <div class="product-grid">
             <!-- Produto 1: Caneca -->
             <div class="product-card">
                 <img src="Caneca.jpg" alt="Caneca de Campo Tática">
                 <h3>Caneca de Campo Tática</h3>
-                <p class="price">R$ 49,90</p>
                 <div class="quantity-selector">
                     <label for="qty-caneca">Qtd:</label>
                     <input type="number" id="qty-caneca" value="1" min="1">
                 </div>
-                <button>Adicionar ao Carrinho</button>
+                <a href="caneca.html">
+                  <button >Cautelar</button>
+                </a>
+                  
+                
+                
             </div>
 
             <!-- Produto 2: Cantil -->
             <div class="product-card">
                 <img src="Cantil.jpg" alt="Cantil Militar Padrão">
                 <h3>Cantil Militar Padrão</h3>
-                <p class="price">R$ 35,50</p>
                 <div class="quantity-selector">
                     <label for="qty-cantil">Qtd:</label>
                     <input type="number" id="qty-cantil" value="1" min="1">
                 </div>
-                <button>Adicionar ao Carrinho</button>
+                <button>Cautelar</button>
             </div>
 
             <!-- Produto 3: Mochila Tática -->
             <div class="product-card">
                 <img src="mochila_campo.jpeg" alt="Mochila Tática de Combate">
                 <h3>Mochila Tática de Combate</h3>
-                <p class="price">R$ 289,00</p>
                 <div class="quantity-selector">
                     <label for="qty-mochila">Qtd:</label>
                     <input type="number" id="qty-mochila" value="1" min="1">
                 </div>
-                <button>Adicionar ao Carrinho</button>
+                <button>Cautelar</button>
             </div>
 
             <!-- Produto 4: Saco de Dormir -->
             <div class="product-card">
                 <img src="Saco_de_Dormir.jpg" alt="Saco de Dormir Tático">
                 <h3>Saco de Dormir Tático</h3>
-                <p class="price">R$ 159,00</p>
                 <div class="quantity-selector">
                     <label for="qty-saco-dormir">Qtd:</label>
                     <input type="number" id="qty-saco-dormir" value="1" min="1">
                 </div>
-                <button>Adicionar ao Carrinho</button>
+                <button>Cautelar</button>
             </div>
 
             <!-- Produto 5: Marmita -->
             <div class="product-card">
                 <img src="Marmita.jpg" alt="Marmita de Campo Inox">
                 <h3>Marmita de Campo Inox</h3>
-                <p class="price">R$ 75,00</p>
                 <div class="quantity-selector">
                     <label for="qty-marmita">Qtd:</label>
                     <input type="number" id="qty-marmita" value="1" min="1">
                 </div>
-                <button>Adicionar ao Carrinho</button>
+                <button>Cautelar</button>
             </div>
         </div>
     </div>
 
     <footer>
         <p>Fale Conosco | Minha Conta | Carrinho</p>
-        <p>Casa do Militar © 2023 - Todos os direitos reservados.</p>
+        <p>Casa do Militar © 2025 - Todos os direitos reservados.</p>
     </footer>
 </body>
 </html>
