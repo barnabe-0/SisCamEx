@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa do Militar - Seu Equipamento para Todas as Missões</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #2e4d2e; /* Verde militar escuro */
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 5px solid #4a6c4a;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            letter-spacing: 2px;
+        }
+        header p {
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+            color: #2e4d2e;
+            margin-bottom: 30px;
+            font-size: 2em;
+            position: relative;
+        }
+        h2::after {
+            content: '';
+            width: 60px;
+            height: 3px;
+            background-color: #4a6c4a;
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            justify-content: center;
+        }
+        .product-card {
+            background-color: #fcfcfc;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .product-card img {
+            max-width: 100%;
+            height: 200px; /* Altura fixa para uniformizar */
+            object-fit: contain; /* Garante que a imagem se ajuste sem cortar */
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .product-card h3 {
+            font-size: 1.4em;
+            color: #3a5f3a; /* Verde militar médio */
+            margin: 10px 0;
+        }
+        .product-card .price {
+            font-size: 1.2em;
+            color: #2e4d2e;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .product-card .quantity-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .product-card .quantity-selector label {
+            margin-right: 10px;
+            color: #555;
+        }
+        .product-card .quantity-selector input {
+            width: 50px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+            -moz-appearance: textfield; /* Remove setas em Firefox */
+        }
+        .product-card .quantity-selector input::-webkit-outer-spin-button,
+        .product-card .quantity-selector input::-webkit-inner-spin-button {
+            -webkit-appearance: none; /* Remove setas em Chrome/Safari */
+            margin: 0;
+        }
+        .product-card button {
+            background-color: #4a6c4a; /* Verde militar mais claro */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .product-card button:hover {
+            background-color: #3a5f3a; /* Verde um pouco mais escuro no hover */
+        }
+        footer {
+            background-color: #2e4d2e;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            font-size: 0.9em;
+            border-top: 5px solid #4a6c4a;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CASA DO MILITAR</h1>
+        <p>Seu Equipamento para Todas as Missões</p>
+    </header>
+
+    <div class="container">
+        <h2>Nossos Produtos em Destaque</h2>
+        <div class="product-grid">
+            <!-- Produto 1: Caneca -->
+            <div class="product-card">
+                <img src="Caneca.jpg" alt="Caneca de Campo Tática">
+                <h3>Caneca de Campo Tática</h3>
+                <p class="price">R$ 49,90</p>
+                <div class="quantity-selector">
+                    <label for="qty-caneca">Qtd:</label>
+                    <input type="number" id="qty-caneca" value="1" min="1">
+                </div>
+                <button>Adicionar ao Carrinho</button>
+            </div>
+
+            <!-- Produto 2: Cantil -->
+            <div class="product-card">
+                <img src="Cantil.jpg" alt="Cantil Militar Padrão">
+                <h3>Cantil Militar Padrão</h3>
+                <p class="price">R$ 35,50</p>
+                <div class="quantity-selector">
+                    <label for="qty-cantil">Qtd:</label>
+                    <input type="number" id="qty-cantil" value="1" min="1">
+                </div>
+                <button>Adicionar ao Carrinho</button>
+            </div>
+
+            <!-- Produto 3: Mochila Tática -->
+            <div class="product-card">
+                <img src="mochila_campo.jpeg" alt="Mochila Tática de Combate">
+                <h3>Mochila Tática de Combate</h3>
+                <p class="price">R$ 289,00</p>
+                <div class="quantity-selector">
+                    <label for="qty-mochila">Qtd:</label>
+                    <input type="number" id="qty-mochila" value="1" min="1">
+                </div>
+                <button>Adicionar ao Carrinho</button>
+            </div>
+
+            <!-- Produto 4: Saco de Dormir -->
+            <div class="product-card">
+                <img src="Saco_de_Dormir.jpg" alt="Saco de Dormir Tático">
+                <h3>Saco de Dormir Tático</h3>
+                <p class="price">R$ 159,00</p>
+                <div class="quantity-selector">
+                    <label for="qty-saco-dormir">Qtd:</label>
+                    <input type="number" id="qty-saco-dormir" value="1" min="1">
+                </div>
+                <button>Adicionar ao Carrinho</button>
+            </div>
+
+            <!-- Produto 5: Marmita -->
+            <div class="product-card">
+                <img src="Marmita.jpg" alt="Marmita de Campo Inox">
+                <h3>Marmita de Campo Inox</h3>
+                <p class="price">R$ 75,00</p>
+                <div class="quantity-selector">
+                    <label for="qty-marmita">Qtd:</label>
+                    <input type="number" id="qty-marmita" value="1" min="1">
+                </div>
+                <button>Adicionar ao Carrinho</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Fale Conosco | Minha Conta | Carrinho</p>
+        <p>Casa do Militar © 2023 - Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
