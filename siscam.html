@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISCAMEX - Sistema de Cautela de Material do Exército</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        /* Estilos base do SISCAM */
+        :root {
+            --main-color: #d3ad7f;
+            --black: #13311a;
+            --bg: #010103;
+            --border: 0.1rem solid rgba(255, 255, 255, 0.3);
+            --verde-militar: #2e4d2e;
+            --verde-claro: #4a6c4a;
+            --verde-escuro: #1a331a;
+            font-size: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            outline: none;
+            border: none;
+            text-decoration: none;
+            text-transform: capitalize;
+            transition: 0.2s linear;
+            font-family: 'Arial', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            padding-top: 120px;
+            padding-bottom: 80px; /* Adiciona padding para o footer fixo */
+            min-height: 100vh; /* Garante que o body ocupe toda a altura da viewport */
+            position: relative; /* Necessário para o footer fixed bottom */
+        }
+
+        /* HEADER */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 99;
+            border-bottom: var(--border);
+            background-color: var(--verde-escuro);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 100px;
+            height: 89px;
+            border-radius:80%;
+            border: 0px solid var(--main-color);
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar a {
+            margin: 0 1rem;
+            font-size: 1.8rem;
+            color: aliceblue;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .navbar a:hover, .navbar a.active {
+            color: var(--main-color);
+            background-color: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Menu Hamburguer */
+        .hamburger-menu {
+            display: inline-block;
+            position: relative;
+        }
+
+        .hamburger-icon {
+            font-size: 2.5rem;
+            color: white;
+            cursor: pointer;
+            padding: 0.8rem;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            position: relative;
+        }
+
+        .hamburger-icon.open {
+            transform: rotate(90deg);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .hamburger-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            border-radius: 6px;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .hamburger-content.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hamburger-content a {
+            display: block;
+            padding: 12px 16px;
+            font-size: 1.6rem;
+            text-decoration: none;
+            color: #333;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+        }
+
+        .hamburger-content a:last-child {
+            border-bottom: none;
+        }
+
+        .hamburger-content a:hover {
+            background: #f1f1f1;
+        }
+
+        /* Container principal */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--verde-militar);
+            margin-bottom: 30px;
+            font-size: 2.4em;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h2::after {
+            content: '';
+            width: 80px;
+            height: 3px;
+            background-color: var(--verde-claro);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Seções do sistema */
+        .system-section {
+            display: none;
+            background: white;
+            padding: 2rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .system-section.active {
+            display: flex; /* Alterado para flexbox */
+            flex-direction: column; /* Coloca os itens em coluna */
+            align-items: center; /* Centraliza horizontalmente */
+            justify-content: center; /* Centraliza verticalmente se houver espaço */
+            min-height: calc(100vh - 120px - 60px - 40px); /* Ajusta altura para centralizar na área visível */
+            padding-bottom: 80px; /* Adiciona espaço para o footer fixo */
+        }
+        
+        /* Ajuste para o formulário de cautela dentro da seção */
+        #cautela {
+             margin: 0 auto; /* Remove margens automáticas que podem afetar o flexbox */
+        }
+
+        #cautela form {
+            max-width: 500px; /* Limite a largura do formulário */
+            width: 100%; /* Ocupa 100% da largura máxima */
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+
+        /* Produtos */
+        .product-grid {
+            display: flex;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .product-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: relative;
+            border-left: 4px solid var(--verde-militar);
+            flex: 0 0 calc(33.333% - 20px); /* 3 colunas com espaçamento */
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+
+        .product-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-card h3 {
+            font-size: 1.6em;
+            color: #3a5f3a;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .product-card .stock-info {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 0;
+            font-size: 1.4rem;
+        }
+
+        .stock-available {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .stock-in-use {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .stock-total {
+            color: #6c757d;
+            font-weight: bold;
+        }
+
+        .product-card .quantity-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .product-card .quantity-selector label {
+            margin-right: 10px;
+            color: #555;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .product-card .quantity-selector input {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 1.4rem;
+            -moz-appearance: textfield;
+        }
+
+        .product-card .quantity-selector input::-webkit-outer-spin-button,
+        .product-card .quantity-selector input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .product-card button {
+            background-color: var(--verde-claro);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.4rem;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        .product-card button:hover {
+            background-color: #3a5f3a;
+            transform: scale(1.03);
+        }
+
+        /* Formulários */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        form label {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--verde-militar);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        form input, form textarea, form select {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1.4rem;
+            transition: border 0.3s;
+        }
+
+        form input:focus, form textarea:focus, form select:focus {
+            border-color: var(--verde-claro);
+            box-shadow: 0 0 5px rgba(46, 77, 46, 0.3);
+        }
+
+        button.btn-primary {
+            background: var(--verde-militar);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.6rem;
+            margin-top: 1rem;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        button.btn-primary:hover {
+            background: var(--verde-claro);
+            transform: translateY(-2px);
+        }
+
+        /* Cadastro de Militar */
+        .cadastro-section {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Histórico */
+        .hist-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid #ddd;
+            font-size: 1.4rem;
+            background: linear-gradient(to right, #f8f9fa, #ffffff);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .hist-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .acoes {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-editar {
+            background: #f0ad4e;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-editar:hover {
+            background: #ec971f;
+        }
+
+        .btn-excluir {
+            background: #d9534f;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-excluir:hover {
+            background: #c9302c;
+        }
+
+        .btn-devolver {
+            background: #28a745;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-devolver:hover {
+            background: #218838;
+        }
+
+        .clear-btn {
+            background: #d9534f;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.4rem;
+            margin-right: 1rem;
+            transition: all 0.3s;
+        }
+
+        .clear-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        #exportarPDF {
+            background: #1a4e8a;
+        }
+
+        #exportarExcel {
+            background: #228B22;
+        }
+
+        /* Lista de Militares Cadastrados */
+        .militares-lista {
+            margin-top: 2rem;
+        }
+
+        .militar-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid #ddd;
+            font-size: 1.4rem;
+            background-color: #f9f9f9;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .militar-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .militar-info {
+            flex: 1;
+        }
+
+        .militar-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Busca e Filtros */
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            padding-left: 40px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--verde-militar);
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            font-size: 1.4rem;
+            border-top: 5px solid var(--verde-claro);
+            position: fixed; /* Fixa o rodapé */
+            bottom: 0; /* Na parte inferior */
+            width: 100%; /* Ocupa toda a largura */
+            z-index: 98; /* Para ficar abaixo do header se sobrepuserem */
+        }
+
+        /* Notificações */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            z-index: 10000;
+            font-size: 1.4rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .notification.success {
+            background-color: #28a745;
+        }
+
+        .notification.error {
+            background-color: #dc3545;
+        }
+
+        /* Gerenciamento */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 4px solid var(--verde-militar);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .dashboard-card h3 {
+            font-size: 1.6rem;
+            color: var(--verde-militar);
+            margin-bottom: 10px;
+        }
+
+        .dashboard-card .number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--verde-claro);
+        }
+
+        /* Devolução de Materiais */
+        .devolucao-section {
+            margin-top: 2rem;
+        }
+
+        .militar-cautelas {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .cautela-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Status do histórico */
+        .status-cautela {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 3px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-left: 1rem;
+        }
+
+        .status-ativo {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-devolvido {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header section {
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 1rem;
+            }
+
+            .navbar {
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .product-card {
+        flex: 0 0 calc(100% - 20px); /* 1 cartão por linha em telas pequenas */
+    }
+
+            .navbar a {
+                margin: 0.3rem;
+                font-size: 1.5rem;
+                padding: 0.5rem;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hamburger-content {
+                right: -50px;
+                min-width: 180px;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .militar-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .militar-actions {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .header section {
+                flex-direction: column;
+            }
+
+            .navbar {
+                flex-direction: row;
+                gap: 0.5rem;
+                margin: 1rem 0;
+                flex-wrap: wrap;
+            }
+
+            .navbar a {
+                font-size: 1.4rem;
+                padding: 0.5rem;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .hamburger-content {
+                right: -80px;
+                min-width: 160px;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header class="header">
+        <section>
+            <a href="index.html" class="logo">
+                <img src="https://i.postimg.cc/0NfkYf7m/brasao-site-png.png"> 
+            </a>
+
+            <nav class="navbar">
+                <a href="#" onclick="mostrarSecao('produtos')" class="active">Produtos</a>
+                <a href="#" onclick="mostrarSecao('cautela')">Cautela</a>
+                <a href="#" onclick="mostrarSecao('devolucao')">Devolução</a>
+            </nav>
+
+            <div class="hamburger-menu">
+                <div class="hamburger-icon" id="hamburgerBtn" onclick="toggleMenu()">☰</div>
+                <div class="hamburger-content" id="hamburgerMenu">
+                    <a href="#" onclick="mostrarSecao('produtos');toggleMenu()">📦 Produtos</a>
+                    <a href="#" onclick="mostrarSecao('cautela');toggleMenu()">📝 Cautela</a>
+                    <a href="#" onclick="mostrarSecao('devolucao');toggleMenu()">🔄 Devolução</a>
+                    <a href="#" onclick="mostrarSecao('gerenciamento');toggleMenu()">⚙️ Gerenciamento</a>
+                    <a href="#" onclick="mostrarSecao('cadastro');toggleMenu()">👤 Cadastro Militar</a>
+                    <a href="#" onclick="mostrarSecao('historico');toggleMenu()">📜 Histórico</a>
+                </div>
+            </div>
+        </section>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <div class="container">
+        <!-- Seção Produtos (ativa por padrão) -->
+        <section id="produtos" class="system-section active">
+            <h2>Materiais Disponíveis</h2>
+            <div class="product-grid" id="product-grid">
+                <!-- Produtos serão carregados via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Seção Cautela -->
+        <section id="cautela" class="system-section">
+            <h2>Nova Cautela</h2>
+            <form id="formCautela">
+                <div class="form-group">
+                    <label for="nomeMilitar">Nome do Militar:</label>
+                    <input type="text" id="nomeMilitar" placeholder="Digite o nome do militar" list="militaresList" required>
+                    <datalist id="militaresList"></datalist>
+                </div>
+                
+                <div class="form-group">
+                    <label for="descricao">Descrição da cautela (opcional):</label>
+                    <textarea id="descricao" placeholder="Descrição da cautela" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="item">Material:</label>
+                    <select id="item" required>
+                        <option value="">Selecione um material</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="quantidade">Quantidade:</label>
+                    <input type="number" id="quantidade" placeholder="Quantidade" min="1" value="0" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">Cadastrar Cautela</button>
+            </form>
+        </section>
+
+        <!-- Seção Devolução -->
+        <section id="devolucao" class="system-section">
+            <h2>Devolução de Materiais</h2>
+            
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="buscarMilitarDevolucao" placeholder="Buscar militar para devolução..." style="width:100%; padding:1rem 1rem 1rem 40px; margin-bottom:1rem; font-size: 1.4rem;">
+            </div>
+            
+            <div id="resultadosDevolucao">
+                <!-- Resultados da busca serão exibidos aqui -->
+            </div>
+        </section>
+
+        <!-- Seção Gerenciamento -->
+        <section id="gerenciamento" class="system-section">
+            <h2>Gerenciamento - Visão Geral</h2>
+            
+            <div class="dashboard-cards">
+                <div class="dashboard-card">
+                    <h3>Total de Militares</h3>
+                    <div class="number" id="totalMilitares">0</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Cautelas Ativas</h3>
+                    <div class="number" id="totalCautelas">0</div>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Produtos Disponíveis</h3>
+                    <div class="number" id="totalProdutos">0</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <h3>Relatórios</h3>
+                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 20px;">
+                    <button class="btn-primary" style="width: auto; padding: 10px 20px;" onclick="exportarMilitaresPDF()">📄 Militares (PDF)</button>
+                    <button class="btn-primary" style="width: auto; padding: 10px 20px;" onclick="exportarMilitaresExcel()">📊 Militares (Excel)</button>
+                    <button class="btn-primary" style="width: auto; padding: 10px 20px;" onclick="exportarEstoquePDF()">📄 Estoque (PDF)</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção Cadastro de Militar -->
+        <section id="cadastro" class="system-section">
+            <h2>Cadastro de Militar</h2>
+            <div class="cadastro-section">
+                <form id="formCadastroMilitar">
+                    <div class="form-group">
+                        <label for="nomeCompleto">Nome Completo:</label>
+                        <input type="text" id="nomeCompleto" placeholder="Nome completo do militar" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nomeGuerra">Nome de Guerra:</label>
+                        <input type="text" id="nomeGuerra" placeholder="Nome de guerra" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="idMilitar">ID Militar:</label>
+                        <input type="text" id="idMilitar" placeholder="Número de identificação" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="postoGraduacao">Posto/Graduação:</label>
+                        <select id="postoGraduacao" required>
+                            <option value="">Selecione o posto/graduação</option>
+                            <option value="Coronel">Coronel</option>
+                            <option value="Tenente-Coronel">Tenente-Coronel</option>
+                            <option value="Major">Major</option>
+                            <option value="Capitão">Capitão</option>
+                            <option value="Primeiro-Tenente">Primeiro-Tenente</option>
+                            <option value="Segundo-Tenente">Segundo-Tenente</option>
+                            <option value="Aspirante a Oficial">Aspirante a Oficial</option>
+                            <option value="Suboficial">Suboficial</option>
+                            <option value="Subtenente">Subtenente</option>
+                            <option value="Primeiro-Sargento">Primeiro-Sargento</option>
+                            <option value="Segundo-Sargento">Segundo-Sargento</option>
+                            <option value="Terceiro-Sargento">Terceiro-Sargento</option>
+                            <option value="Aluno">Aluno</option>
+                            <option value="Cabo">Cabo</option>
+                            <option value="Soldado">Soldado</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Cadastrar Militar</button>
+                </form>
+
+                <div class="militares-lista" id="militaresLista">
+                    <h3>Militares Cadastrados</h3>
+                    <!-- Lista de militares será preenchida via JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção Histórico -->
+        <section id="historico" class="system-section">
+            <h2>Histórico de Cautelas</h2>
+            
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="filtroHistorico" placeholder="Buscar por nome ou material..." style="width:100%; padding:1rem 1rem 1rem 40px; margin-bottom:1rem; font-size: 1.4rem;">
+            </div>
+            
+            <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap: wrap;">
+                <button class="clear-btn" id="limparHistorico">🗑 Limpar Histórico</button>
+                <button class="clear-btn" id="exportarPDF" style="background:#1a4e8a;">📄 Exportar PDF</button>
+                <button class="clear-btn" id="exportarExcel" style="background:#228B22;">📊 Exportar Excel</button>
+            </div>
+
+            <div id="historico-lista"></div>
+        </section>
+    </div>
+
+    <footer>
+        <p>SISCAM - Sistema de Controle de Material © 2023 - Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // Dados iniciais do sistema - AGORA COM QUANTIDADE EM USO INICIANDO EM 0
+        let produtos = JSON.parse(localStorage.getItem("produtos")) || [
+            { id: 1, nome: "Caneca de Campo Tática", imagem: "img/Caneca.jpg", quantidadeTotal: 50, quantidadeEmUso: 0 },
+            { id: 2, nome: "Cantil Militar Padrão", imagem: "img/Cantil.jpg", quantidadeTotal: 30, quantidadeEmUso: 0 },
+            { id: 3, nome: "Mochila Tática de Combate", imagem: "img/mochila_campo.jpeg", quantidadeTotal: 20, quantidadeEmUso: 0 },
+            { id: 4, nome: "Saco de Dormir Tático", imagem: "img/Saco_de_Dormir.jpg", quantidadeTotal: 15, quantidadeEmUso: 0 },
+            { id: 5, nome: "Marmita de Campo Inox", imagem: "", quantidadeTotal: 40, quantidadeEmUso: 0 }
+       
+            
+        ];
+
+        let militares = JSON.parse(localStorage.getItem("militares")) || [];
+        let historico = JSON.parse(localStorage.getItem("historico")) || [];
+        let cautelasAtivas = JSON.parse(localStorage.getItem("cautelasAtivas")) || [];
+
+        // Função para salvar dados no localStorage
+        function salvarDados() {
+            localStorage.setItem("produtos", JSON.stringify(produtos));
+            localStorage.setItem("militares", JSON.stringify(militares));
+            localStorage.setItem("historico", JSON.stringify(historico));
+            localStorage.setItem("cautelasAtivas", JSON.stringify(cautelasAtivas));
+        }
+
+        // Função para mostrar seções
+        function mostrarSecao(secao) {
+            document.querySelectorAll('.system-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            document.getElementById(secao).classList.add('active');
+            
+            // Atualizar navegação ativa
+            document.querySelectorAll('.navbar a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            if (secao === 'produtos' || secao === 'cautela' || secao === 'devolucao') {
+                document.querySelector(`.navbar a[onclick="mostrarSecao('${secao}')"]`).classList.add('active');
+            }
+            
+            // Atualizar conteúdo específico da seção
+            if (secao === 'produtos') {
+                atualizarProdutos();
+            } else if (secao === 'cautela') {
+                atualizarFormCautela();
+            } else if (secao === 'devolucao') {
+                document.getElementById('buscarMilitarDevolucao').value = '';
+                document.getElementById('resultadosDevolucao').innerHTML = '<p>Digite o nome de um militar para buscar suas cautelas.</p>';
+            } else if (secao === 'historico') {
+                atualizarHistorico();
+            } else if (secao === 'cadastro') {
+                atualizarListaMilitares();
+            } else if (secao === 'gerenciamento') {
+                atualizarGerenciamento();
+            }
+        }
+
+        // Função para alternar o menu hambúrguer
+        function toggleMenu() {
+            const hamburgerMenu = document.getElementById('hamburgerMenu');
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            
+            // Alternar a classe 'show' no menu
+            hamburgerMenu.classList.toggle('show');
+            
+            // Alternar a classe 'open' no botão
+            hamburgerBtn.classList.toggle('open');
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(e) {
+            const hamburgerMenu = document.getElementById('hamburgerMenu');
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            
+            if (!hamburgerMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+                hamburgerMenu.classList.remove('show');
+                hamburgerBtn.classList.remove('open');
+            }
+        });
+
+        // Atualizar produtos na seção de produtos
+        function atualizarProdutos() {
+            const productGrid = document.getElementById('product-grid');
+            productGrid.innerHTML = '';
+            
+            produtos.forEach(produto => {
+                const disponivel = produto.quantidadeTotal - produto.quantidadeEmUso;
+                
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <div class="product-image">
+                        <img src="${produto.imagem}" alt="${produto.nome}">
+                    </div>
+                    <h3>${produto.nome}</h3>
+                    <div class="stock-info">
+                        <span class="stock-available">Disponível: ${disponivel}</span>
+                        <span class="stock-in-use">Em uso: ${produto.quantidadeEmUso}</span>
+                        <span class="stock-total">Total: ${produto.quantidadeTotal}</span>
+                    </div>
+                    <div class="quantity-selector">
+                        <label for="qty-${produto.id}">Quantidade:</label>
+                        <input type="number" id="qty-${produto.id}" min="1" max="${disponivel}" value="1" ${disponivel === 0 ? 'disabled' : ''}>
+                    </div>
+                    <button onclick="cautelarProduto(${produto.id})" ${disponivel === 0 ? 'disabled' : ''}>
+                        ${disponivel === 0 ? 'Indisponível' : 'Cautelar'}
+                    </button>
+                `;
+                productGrid.appendChild(productCard);
+            });
+        }
+
+        // Atualizar formulário de cautela
+        function atualizarFormCautela() {
+            const selectItem = document.getElementById('item');
+            selectItem.innerHTML = '<option value="">Selecione um material</option>';
+            
+            produtos.forEach(produto => {
+                const disponivel = produto.quantidadeTotal - produto.quantidadeEmUso;
+                if (disponivel > 0) {
+                    const option = document.createElement('option');
+                    option.value = produto.id;
+                    option.textContent = `${produto.nome} (Disponível: ${disponivel})`;
+                    selectItem.appendChild(option);
+                }
+            });
+            
+            // Atualizar lista de militares para autocomplete
+            const militaresList = document.getElementById('militaresList');
+            militaresList.innerHTML = '';
+            
+            militares.forEach(militar => {
+                const option = document.createElement('option');
+                option.value = `${militar.nomeGuerra} (${militar.postoGraduacao})`;
+                militaresList.appendChild(option);
+            });
+        }
+
+        // Função para cautelar produto
+        function cautelarProduto(produtoId) {
+            // Verificar se há militares cadastrados
+            if (militares.length === 0) {
+                mostrarNotificacao('É necessário cadastrar pelo menos um militar antes de fazer uma cautela.', 'error');
+                return;
+            }
+            
+            const quantidadeInput = document.getElementById(`qty-${produtoId}`);
+            const quantidade = parseInt(quantidadeInput.value) || 1;
+            const produto = produtos.find(p => p.id === produtoId);
+            
+            if (quantidade <= 0) {
+                mostrarNotificacao('Quantidade deve ser maior que zero.', 'error');
+                return;
+            }
+            
+            if (quantidade > (produto.quantidadeTotal - produto.quantidadeEmUso)) {
+                mostrarNotificacao('Quantidade indisponível.', 'error');
+                return;
+            }
+            
+            // Mostrar seção de cautela
+            mostrarSecao('cautela');
+            
+            // Preencher o formulário
+            document.getElementById('item').value = produtoId;
+            document.getElementById('quantidade').value = quantidade;
+            
+            // Focar no campo de nome do militar
+            document.getElementById('nomeMilitar').focus();
+        }
+
+        // Formulário de cautela
+        document.getElementById('formCautela').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nomeMilitar = document.getElementById('nomeMilitar').value;
+            const descricao = document.getElementById('descricao').value;
+            const produtoId = parseInt(document.getElementById('item').value);
+            const quantidade = parseInt(document.getElementById('quantidade').value);
+            
+            if (!nomeMilitar || !produtoId || !quantidade) {
+                mostrarNotificacao('Preencha todos os campos obrigatórios.', 'error');
+                return;
+            }
+            
+            const produto = produtos.find(p => p.id === produtoId);
+            if (!produto) {
+                mostrarNotificacao('Produto não encontrado.', 'error');
+                return;
+            }
+            
+            if (quantidade > (produto.quantidadeTotal - produto.quantidadeEmUso)) {
+                mostrarNotificacao('Quantidade indisponível.', 'error');
+                return;
+            }
+            
+            // Extrair nome de guerra do militar (remover posto/graduação se presente)
+            let nomeGuerra = nomeMilitar;
+            if (nomeMilitar.includes('(')) {
+                nomeGuerra = nomeMilitar.split('(')[0].trim();
+            }
+            
+            // Verificar se o militar está cadastrado
+            const militar = militares.find(m => m.nomeGuerra === nomeGuerra);
+            if (!militar) {
+                mostrarNotificacao('Militar não encontrado. Cadastre-o primeiro.', 'error');
+                return;
+            }
+            
+            // Atualizar quantidade em uso do produto
+            produto.quantidadeEmUso += quantidade;
+            
+            // Criar registro de cautela
+            const cautela = {
+                id: Date.now(),
+                militarId: militar.id,
+                militarNome: militar.nomeCompleto,
+                militarNomeGuerra: militar.nomeGuerra,
+                militarPosto: militar.postoGraduacao,
+                produtoId: produto.id,
+                produtoNome: produto.nome,
+                quantidade: quantidade,
+                descricao: descricao,
+                data: new Date().toLocaleString('pt-BR'),
+                status: 'ativo'
+            };
+            
+            // Adicionar ao histórico e cautelas ativas
+            historico.push(cautela);
+            cautelasAtivas.push(cautela);
+            
+            // Salvar dados
+            salvarDados();
+            
+            // Mostrar notificação
+            mostrarNotificacao(`Cautela registrada com sucesso para ${militar.nomeGuerra}!`, 'success');
+            
+            // Limpar formulário
+            this.reset();
+            document.getElementById('quantidade').value = 1;
+            
+            // Atualizar produtos
+            atualizarProdutos();
+            atualizarFormCautela();
+        });
+
+        // Formulário de cadastro de militar
+        document.getElementById('formCadastroMilitar').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nomeCompleto = document.getElementById('nomeCompleto').value;
+            const nomeGuerra = document.getElementById('nomeGuerra').value;
+            const idMilitar = document.getElementById('idMilitar').value;
+            const postoGraduacao = document.getElementById('postoGraduacao').value;
+            
+            // Verificar se ID já existe
+            if (militares.some(m => m.idMilitar === idMilitar)) {
+                mostrarNotificacao('ID Militar já cadastrado.', 'error');
+                return;
+            }
+            
+            // Criar novo militar
+            const militar = {
+                id: Date.now(),
+                nomeCompleto: nomeCompleto,
+                nomeGuerra: nomeGuerra,
+                idMilitar: idMilitar,
+                postoGraduacao: postoGraduacao
+            };
+            
+            militares.push(militar);
+            salvarDados();
+            
+            // Mostrar notificação
+            mostrarNotificacao(`Militar ${nomeGuerra} cadastrado com sucesso!`, 'success');
+            
+            // Limpar formulário
+            this.reset();
+            
+            // Atualizar lista de militares
+            atualizarListaMilitares();
+            atualizarFormCautela();
+        });
+
+        // Atualizar lista de militares
+        function atualizarListaMilitares() {
+            const militaresLista = document.getElementById('militaresLista');
+            militaresLista.innerHTML = '<h3>Militares Cadastrados</h3>';
+            
+            if (militares.length === 0) {
+                militaresLista.innerHTML += '<p>Nenhum militar cadastrado.</p>';
+                return;
+            }
+            
+            militares.forEach(militar => {
+                const militarItem = document.createElement('div');
+                militarItem.className = 'militar-item';
+                militarItem.innerHTML = `
+                    <div class="militar-info">
+                        <strong>${militar.nomeGuerra}</strong> (${militar.postoGraduacao})<br>
+                        <small>${militar.nomeCompleto} - ID: ${militar.idMilitar}</small>
+                    </div>
+                    <div class="militar-actions">
+                        <button class="btn-editar" onclick="editarMilitar(${militar.id})">Editar</button>
+                        <button class="btn-excluir" onclick="excluirMilitar(${militar.id})">Excluir</button>
+                    </div>
+                `;
+                militaresLista.appendChild(militarItem);
+            });
+        }
+
+        // Editar militar
+        function editarMilitar(id) {
+            const militar = militares.find(m => m.id === id);
+            if (!militar) return;
+            
+            // Preencher formulário com dados do militar
+            document.getElementById('nomeCompleto').value = militar.nomeCompleto;
+            document.getElementById('nomeGuerra').value = militar.nomeGuerra;
+            document.getElementById('idMilitar').value = militar.idMilitar;
+            document.getElementById('postoGraduacao').value = militar.postoGraduacao;
+            
+            // Remover militar da lista (será recriado com mesmo ID)
+            excluirMilitar(id, false);
+            
+            // Focar no formulário
+            document.getElementById('nomeCompleto').focus();
+            
+            mostrarNotificacao(`Editando militar ${militar.nomeGuerra}. Preencha os dados e clique em Cadastrar.`, 'success');
+        }
+
+        // Excluir militar
+        function excluirMilitar(id, confirmar = true) {
+            const militar = militares.find(m => m.id === id);
+            if (!militar) return;
+            
+            // Verificar se o militar tem cautelas ativas
+            const cautelasMilitar = cautelasAtivas.filter(c => c.militarId === id);
+            if (cautelasMilitar.length > 0 && confirmar) {
+                if (!confirm(`O militar ${militar.nomeGuerra} possui ${cautelasMilitar.length} cautela(s) ativa(s). Deseja realmente excluí-lo?`)) {
+                    return;
+                }
+            }
+            
+            if (confirmar && !confirm(`Tem certeza que deseja excluir o militar ${militar.nomeGuerra}?`)) {
+                return;
+            }
+            
+            // Remover militar
+            militares = militares.filter(m => m.id !== id);
+            
+            // Se havia cautelas ativas, devolver os materiais
+            if (cautelasMilitar.length > 0) {
+                cautelasMilitar.forEach(cautela => {
+                    const produto = produtos.find(p => p.id === cautela.produtoId);
+                    if (produto) {
+                        produto.quantidadeEmUso -= cautela.quantidade;
+                    }
+                    
+                    // Marcar cautela como devolvida
+                    const historicoItem = historico.find(h => h.id === cautela.id);
+                    if (historicoItem) {
+                        historicoItem.status = 'devolvido';
+                        historicoItem.dataDevolucao = new Date().toLocaleString('pt-BR');
+                    }
+                });
+                
+                // Remover cautelas ativas
+                cautelasAtivas = cautelasAtivas.filter(c => c.militarId !== id);
+            }
+            
+            salvarDados();
+            atualizarListaMilitares();
+            atualizarFormCautela();
+            atualizarProdutos();
+            
+            if (confirmar) {
+                mostrarNotificacao(`Militar ${militar.nomeGuerra} excluído com sucesso!`, 'success');
+            }
+        }
+
+        // Buscar militar para devolução
+        document.getElementById('buscarMilitarDevolucao').addEventListener('input', function() {
+            const termo = this.value.toLowerCase();
+            const resultadosDevolucao = document.getElementById('resultadosDevolucao');
+            
+            if (termo.length < 2) {
+                resultadosDevolucao.innerHTML = '<p>Digite pelo menos 2 caracteres para buscar.</p>';
+                return;
+            }
+            
+            // Filtrar militares com cautelas ativas
+            const militaresComCautelas = militares.filter(militar => {
+                const cautelas = cautelasAtivas.filter(c => c.militarId === militar.id);
+                return cautelas.length > 0 && 
+                      (militar.nomeCompleto.toLowerCase().includes(termo) || 
+                       militar.nomeGuerra.toLowerCase().includes(termo));
+            });
+            
+            if (militaresComCautelas.length === 0) {
+                resultadosDevolucao.innerHTML = '<p>Nenhum militar encontrado com cautelas ativas.</p>';
+                return;
+            }
+            
+            resultadosDevolucao.innerHTML = '';
+            
+            militaresComCautelas.forEach(militar => {
+                const cautelas = cautelasAtivas.filter(c => c.militarId === militar.id);
+                
+                const militarDiv = document.createElement('div');
+                militarDiv.className = 'militar-cautelas';
+                militarDiv.innerHTML = `
+                    <h3>${militar.nomeGuerra} (${militar.postoGraduacao})</h3>
+                    <p><strong>Nome completo:</strong> ${militar.nomeCompleto}</p>
+                    <p><strong>Cautelas ativas:</strong> ${cautelas.length}</p>
+                    <div class="cautelas-lista">
+                        ${cautelas.map(cautela => `
+                            <div class="cautela-item">
+                                <div>
+                                    <strong>${cautela.produtoNome}</strong> - Qtd: ${cautela.quantidade}
+                                    ${cautela.descricao ? `<br><small>${cautela.descricao}</small>` : ''}
+                                </div>
+                                <button class="btn-devolver" onclick="devolverMaterial(${cautela.id})">Devolver</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                resultadosDevolucao.appendChild(militarDiv);
+            });
+        });
+
+        // Devolver material
+        function devolverMaterial(cautelaId) {
+            const cautelaIndex = cautelasAtivas.findIndex(c => c.id === cautelaId);
+            if (cautelaIndex === -1) return;
+            
+            const cautela = cautelasAtivas[cautelaIndex];
+            const produto = produtos.find(p => p.id === cautela.produtoId);
+            
+            if (!produto) return;
+            
+            // Devolver quantidade ao estoque
+            produto.quantidadeEmUso -= cautela.quantidade;
+            
+            // Atualizar histórico
+            const historicoItem = historico.find(h => h.id === cautelaId);
+            if (historicoItem) {
+                historicoItem.status = 'devolvido';
+                historicoItem.dataDevolucao = new Date().toLocaleString('pt-BR');
+            }
+            
+            // Remover cautela ativa
+            cautelasAtivas.splice(cautelaIndex, 1);
+            
+            salvarDados();
+            
+            // Atualizar interface
+            document.getElementById('buscarMilitarDevolucao').dispatchEvent(new Event('input'));
+            atualizarProdutos();
+            
+            mostrarNotificacao(`Material devolvido com sucesso por ${cautela.militarNomeGuerra}!`, 'success');
+        }
+
+        // Atualizar histórico
+        function atualizarHistorico() {
+            const historicoLista = document.getElementById('historico-lista');
+            const filtro = document.getElementById('filtroHistorico').value.toLowerCase();
+            
+            let historicoFiltrado = historico;
+            
+            if (filtro) {
+                historicoFiltrado = historico.filter(item => 
+                    item.militarNomeGuerra.toLowerCase().includes(filtro) ||
+                    item.produtoNome.toLowerCase().includes(filtro)
+                );
+            }
+            
+            if (historicoFiltrado.length === 0) {
+                historicoLista.innerHTML = '<p>Nenhum registro encontrado.</p>';
+                return;
+            }
+            
+            // Ordenar por data (mais recente primeiro)
+            historicoFiltrado.sort((a, b) => new Date(b.data) - new Date(a.data));
+            
+            historicoLista.innerHTML = '';
+            
+            historicoFiltrado.forEach(item => {
+                const histItem = document.createElement('div');
+                histItem.className = 'hist-item';
+                histItem.innerHTML = `
+                    <div>
+                        <strong>${item.militarNomeGuerra} (${item.militarPosto})</strong>
+                        <span class="status-cautela ${item.status === 'ativo' ? 'status-ativo' : 'status-devolvido'}">
+                            ${item.status === 'ativo' ? 'Ativo' : 'Devolvido'}
+                        </span>
+                        <br>
+                        <strong>Material:</strong> ${item.produtoNome} - Qtd: ${item.quantidade}
+                        <br>
+                        <strong>Data:</strong> ${item.data}
+                        ${item.dataDevolucao ? `<br><strong>Devolvido em:</strong> ${item.dataDevolucao}` : ''}
+                        ${item.descricao ? `<br><strong>Descrição:</strong> ${item.descricao}` : ''}
+                    </div>
+                    ${item.status === 'ativo' ? `
+                        <div class="acoes">
+                            <button class="btn-devolver" onclick="devolverMaterial(${item.id})">Devolver</button>
+                        </div>
+                    ` : ''}
+                `;
+                historicoLista.appendChild(histItem);
+            });
+        }
+
+        // Filtro do histórico
+        document.getElementById('filtroHistorico').addEventListener('input', atualizarHistorico);
+
+        // Limpar histórico
+        document.getElementById('limparHistorico').addEventListener('click', function() {
+            if (confirm('Tem certeza que deseja limpar todo o histórico? Esta ação não pode ser desfeita.')) {
+                historico = [];
+                cautelasAtivas = [];
+                
+                // Resetar quantidade em uso de todos os produtos
+                produtos.forEach(produto => {
+                    produto.quantidadeEmUso = 0;
+                });
+                
+                salvarDados();
+                atualizarHistorico();
+                atualizarProdutos();
+                
+                mostrarNotificacao('Histórico limpo com sucesso!', 'success');
+            }
+        });
+
+        // Atualizar gerenciamento
+        function atualizarGerenciamento() {
+            document.getElementById('totalMilitares').textContent = militares.length;
+            document.getElementById('totalCautelas').textContent = cautelasAtivas.length;
+            document.getElementById('totalProdutos').textContent = produtos.length;
+        }
+
+        // Exportar PDF do histórico
+        document.getElementById('exportarPDF').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.text('Histórico de Cautelas - SISCAM', 20, 20);
+            
+            let y = 40;
+            historico.forEach((item, index) => {
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                doc.setFontSize(10);
+                doc.text(`${index+1}. ${item.militarNomeGuerra} (${item.militarPosto}) - ${item.produtoNome} - Qtd: ${item.quantidade} - ${item.data} - ${item.status}`, 20, y);
+                y += 10;
+            });
+            
+            doc.save('historico_cautelas.pdf');
+            mostrarNotificacao('PDF exportado com sucesso!', 'success');
+        });
+
+        // Exportar Excel do histórico
+        document.getElementById('exportarExcel').addEventListener('click', function() {
+            const dados = historico.map(item => ({
+                'Militar': `${item.militarNomeGuerra} (${item.militarPosto})`,
+                'Material': item.produtoNome,
+                'Quantidade': item.quantidade,
+                'Data': item.data,
+                'Status': item.status,
+                'Data Devolução': item.dataDevolucao || 'N/A',
+                'Descrição': item.descricao || 'N/A'
+            }));
+            
+            const ws = XLSX.utils.json_to_sheet(dados);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Histórico');
+            XLSX.writeFile(wb, 'historico_cautelas.xlsx');
+            mostrarNotificacao('Excel exportado com sucesso!', 'success');
+        });
+
+        // Exportar PDF de militares
+        function exportarMilitaresPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.text('Relatório de Militares - SISCAM', 20, 20);
+            
+            let y = 40;
+            militares.forEach((militar, index) => {
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                doc.setFontSize(10);
+                doc.text(`${index+1}. ${militar.nomeGuerra} (${militar.postoGraduacao}) - ${militar.nomeCompleto} - ID: ${militar.idMilitar}`, 20, y);
+                y += 10;
+            });
+            
+            doc.save('militares_cadastrados.pdf');
+            mostrarNotificacao('PDF de militares exportado com sucesso!', 'success');
+        }
+
+        // Exportar Excel de militares
+        function exportarMilitaresExcel() {
+            const dados = militares.map(militar => ({
+                'Nome de Guerra': militar.nomeGuerra,
+                'Posto/Graduação': militar.postoGraduacao,
+                'Nome Completo': militar.nomeCompleto,
+                'ID Militar': militar.idMilitar
+            }));
+            
+            const ws = XLSX.utils.json_to_sheet(dados);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Militares');
+            XLSX.writeFile(wb, 'militares_cadastrados.xlsx');
+            mostrarNotificacao('Excel de militares exportado com sucesso!', 'success');
+        }
+
+        // Exportar PDF de estoque
+        function exportarEstoquePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.text('Relatório de Estoque - SISCAM', 20, 20);
+            
+            let y = 40;
+            produtos.forEach((produto, index) => {
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                const disponivel = produto.quantidadeTotal - produto.quantidadeEmUso;
+                
+                doc.setFontSize(10);
+                doc.text(`${index+1}. ${produto.nome} - Total: ${produto.quantidadeTotal} - Em uso: ${produto.quantidadeEmUso} - Disponível: ${disponivel}`, 20, y);
+                y += 10;
+            });
+            
+            doc.save('estoque_materiais.pdf');
+            mostrarNotificacao('PDF de estoque exportado com sucesso!', 'success');
+        }
+
+        // Mostrar notificações
+        function mostrarNotificacao(mensagem, tipo) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${tipo}`;
+            notification.textContent = mensagem;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        // Inicializar o sistema
+        window.onload = function() {
+            // Carregar dados salvos
+            if (localStorage.getItem("produtos")) {
+                produtos = JSON.parse(localStorage.getItem("produtos"));
+            }
+            
+            if (localStorage.getItem("militares")) {
+                militares = JSON.parse(localStorage.getItem("militares"));
+            }
+            
+            if (localStorage.getItem("historico")) {
+                historico = JSON.parse(localStorage.getItem("historico"));
+            }
+            
+            if (localStorage.getItem("cautelasAtivas")) {
+                cautelasAtivas = JSON.parse(localStorage.getItem("cautelasAtivas"));
+            }
+            
+            // Atualizar interface
+            atualizarProdutos();
+            atualizarFormCautela();
+            atualizarListaMilitares();
+            atualizarGerenciamento();
+            
+            // Verificar se há militares cadastrados e mostrar alerta se necessário
+            if (militares.length === 0) {
+                setTimeout(() => {
+                    mostrarNotificacao('Nenhum militar cadastrado. Cadastre um militar antes de fazer cautelas.', 'error');
+                }, 1000);
+            }
+        };
+    </script>
+</body>
+</html>
